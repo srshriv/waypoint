@@ -8,12 +8,14 @@ const describe = (roles) => roles.map((role) => (ROLE_LABELS[role] || role).toLo
  * what puts the resolved profile on the request.
  */
 export function requireRole(...roles) {
-    return function enforceRole(request, response, next) {
-        const role = request.profile?.role;
-        if (!role) return next(new AppError(401, "PROFILE_REQUIRED", "Select a Waypoint profile to continue."));
-        if (!roles.includes(role)) {
-            return next(new AppError(403, "ROLE_FORBIDDEN", `Only a ${describe(roles)} can perform this action.`, { requiredRoles: roles, role }));
-        }
-        return next();
-    };
+	return function enforceRole(request, response, next) {
+		const role = request.profile?.role;
+		if (!role) return next(new AppError(401, "PROFILE_REQUIRED", "Select a Waypoint profile to continue."));
+		if (!roles.includes(role)) {
+			return next(
+				new AppError(403, "ROLE_FORBIDDEN", `Only a ${describe(roles)} can perform this action.`, { requiredRoles: roles, role }),
+			);
+		}
+		return next();
+	};
 }

@@ -6,15 +6,15 @@ import mongoose from "mongoose";
  * per deployment and is what the UI sends back as `after` to fetch only new lines.
  */
 const deploymentLogSchema = new mongoose.Schema(
-    {
-        deploymentId: { type: mongoose.Schema.Types.ObjectId, ref: "Deployment", required: true, index: true },
-        sequence: { type: Number, required: true, min: 1 },
-        level: { type: String, required: true, enum: ["info", "warn", "error"], default: "info" },
-        message: { type: String, required: true, trim: true, maxlength: 500 },
-        stepKey: { type: String, default: "", trim: true, maxlength: 40 },
-        createdAt: { type: Date, default: Date.now },
-    },
-    { versionKey: false },
+	{
+		deploymentId: { type: mongoose.Schema.Types.ObjectId, ref: "Deployment", required: true, index: true },
+		sequence: { type: Number, required: true, min: 1 },
+		level: { type: String, required: true, enum: ["info", "warn", "error"], default: "info" },
+		message: { type: String, required: true, trim: true, maxlength: 500 },
+		stepKey: { type: String, default: "", trim: true, maxlength: 40 },
+		createdAt: { type: Date, default: Date.now },
+	},
+	{ versionKey: false },
 );
 
 deploymentLogSchema.index({ deploymentId: 1, sequence: 1 }, { unique: true });

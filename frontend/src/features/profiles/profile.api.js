@@ -1,5 +1,5 @@
 import { request } from "../../shared/api/client.js";
 
 export const profileApi = {
-    list: () => request("/profiles"),
+	list: () => request("/profiles"),
 };

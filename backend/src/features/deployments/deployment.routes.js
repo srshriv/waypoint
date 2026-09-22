@@ -1,12 +1,12 @@
 import { Router } from "express";
 import {
-    getDeployment,
-    getDeploymentLogs,
-    listDeployments,
-    listRollbackTargets,
-    promoteDeployment,
-    rollbackDeployment,
-    triggerDeployment,
+	getDeployment,
+	getDeploymentLogs,
+	listDeployments,
+	listRollbackTargets,
+	promoteDeployment,
+	rollbackDeployment,
+	triggerDeployment,
 } from "./deployment.controller.js";
 
 // Role is not gated here. Whether a contributor may deploy depends on the target

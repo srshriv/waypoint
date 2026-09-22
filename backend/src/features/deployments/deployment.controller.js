@@ -12,59 +12,75 @@ const rollbackSchema = z.object({ environmentId: objectId, targetDeploymentId: o
 const rollbackTargetsSchema = z.object({ environmentId: objectId }).strict();
 
 const actingProfile = (request) => ({
-    profileId: request.profileId,
-    role: request.profile.role,
-    name: request.profile.name,
+	profileId: request.profileId,
+	role: request.profile.role,
+	name: request.profile.name,
 });
 
 export async function listDeployments(request, response, next) {
-    try {
-        const { environmentId } = listSchema.parse(request.query);
-        response.json({ data: await deploymentService.list(request.params.projectId, environmentId, request.profileId) });
-    } catch (error) { next(error); }
+	try {
+		const { environmentId } = listSchema.parse(request.query);
+		response.json({ data: await deploymentService.list(request.params.projectId, environmentId, request.profileId) });
+	} catch (error) {
+		next(error);
+	}
 }
 
 export async function getDeployment(request, response, next) {
-    try {
-        response.json({ data: await deploymentService.get(request.params.projectId, request.params.deploymentId, request.profileId) });
-    } catch (error) { next(error); }
+	try {
+		response.json({ data: await deploymentService.get(request.params.projectId, request.params.deploymentId, request.profileId) });
+	} catch (error) {
+		next(error);
+	}
 }
 
 export async function getDeploymentLogs(request, response, next) {
-    try {
-        const { after } = logsSchema.parse(request.query);
-        response.json({ data: await deploymentService.logs(request.params.projectId, request.params.deploymentId, after, request.profileId) });
-    } catch (error) { next(error); }
+	try {
+		const { after } = logsSchema.parse(request.query);
+		response.json({
+			data: await deploymentService.logs(request.params.projectId, request.params.deploymentId, after, request.profileId),
+		});
+	} catch (error) {
+		next(error);
+	}
 }
 
 export async function triggerDeployment(request, response, next) {
-    try {
-        const input = triggerSchema.parse(request.body);
-        const { deployment, reused } = await deploymentService.trigger(request.params.projectId, input, actingProfile(request));
-        // A reused request key is not a new deployment, so it answers 200 rather than 201.
-        response.status(reused ? 200 : 201).json({ data: { deployment, reused } });
-    } catch (error) { next(error); }
+	try {
+		const input = triggerSchema.parse(request.body);
+		const { deployment, reused } = await deploymentService.trigger(request.params.projectId, input, actingProfile(request));
+		// A reused request key is not a new deployment, so it answers 200 rather than 201.
+		response.status(reused ? 200 : 201).json({ data: { deployment, reused } });
+	} catch (error) {
+		next(error);
+	}
 }
 
 export async function promoteDeployment(request, response, next) {
-    try {
-        const input = promoteSchema.parse(request.body);
-        const { deployment, reused } = await deploymentService.promote(request.params.projectId, input, actingProfile(request));
-        response.status(reused ? 200 : 201).json({ data: { deployment, reused } });
-    } catch (error) { next(error); }
+	try {
+		const input = promoteSchema.parse(request.body);
+		const { deployment, reused } = await deploymentService.promote(request.params.projectId, input, actingProfile(request));
+		response.status(reused ? 200 : 201).json({ data: { deployment, reused } });
+	} catch (error) {
+		next(error);
+	}
 }
 
 export async function rollbackDeployment(request, response, next) {
-    try {
-        const input = rollbackSchema.parse(request.body);
-        const { deployment, reused } = await deploymentService.rollback(request.params.projectId, input, actingProfile(request));
-        response.status(reused ? 200 : 201).json({ data: { deployment, reused } });
-    } catch (error) { next(error); }
+	try {
+		const input = rollbackSchema.parse(request.body);
+		const { deployment, reused } = await deploymentService.rollback(request.params.projectId, input, actingProfile(request));
+		response.status(reused ? 200 : 201).json({ data: { deployment, reused } });
+	} catch (error) {
+		next(error);
+	}
 }
 
 export async function listRollbackTargets(request, response, next) {
-    try {
-        const { environmentId } = rollbackTargetsSchema.parse(request.query);
-        response.json({ data: await deploymentService.rollbackTargets(request.params.projectId, environmentId, request.profileId) });
-    } catch (error) { next(error); }
+	try {
+		const { environmentId } = rollbackTargetsSchema.parse(request.query);
+		response.json({ data: await deploymentService.rollbackTargets(request.params.projectId, environmentId, request.profileId) });
+	} catch (error) {
+		next(error);
+	}
 }
