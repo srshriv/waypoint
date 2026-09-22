@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="theme-color" content="#131314" media="(prefers-color-scheme: dark)" />
+        <meta name="theme-color" content="#f8fafd" media="(prefers-color-scheme: light)" />
+        <title>Waypoint API</title>
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <style>
+            :root { color-scheme: dark; --surface: #1e1f20; --surface-muted: #131314; --border: #444746; --ink: #e3e3e3; --ink-strong: #e8eaed; --muted: #9aa0a6; --blue: #8ab4f8; --blue-tint: #394457; }
+            @media (prefers-color-scheme: light) {
+                :root { color-scheme: light; --surface: #fff; --surface-muted: #f8fafd; --border: #dadce0; --ink: #202124; --ink-strong: #3c4043; --muted: #5f6368; --blue: #1a73e8; --blue-tint: #d3e3fd; }
+            }
+            * { box-sizing: border-box; }
+            body { display: grid; min-height: 100dvh; margin: 0; place-items: center; padding: 24px; background: var(--surface-muted); color: var(--ink); font-family: Roboto, Arial, sans-serif; }
+            main { width: min(520px, 100%); padding: 32px; border: 1px solid var(--border); border-radius: 28px; background: var(--surface); }
+            header { display: flex; align-items: center; gap: 14px; margin-bottom: 8px; }
+            header img { width: 40px; height: 40px; }
+            h1 { margin: 0; color: var(--ink-strong); font-size: 22px; font-weight: 400; }
+            p { margin: 0 0 24px; color: var(--muted); font-size: 14px; line-height: 20px; }
+            dl { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px 16px; margin: 0; font-size: 13px; }
+            dt { color: var(--blue); font-weight: 500; }
+            dd { margin: 0; color: var(--ink-strong); }
+            code { padding: 2px 6px; border-radius: 4px; background: var(--blue-tint); font-size: 12px; }
+        </style>
+    </head>
+    <body>
+        <main>
+            <header><img src="/favicon.svg" alt="" /><h1>Waypoint API</h1></header>
+            <p>The deployment and release console API is running. The console itself is served by the frontend development server on port 3000.</p>
+            <dl>
+                <dt>Health</dt>
+                <dd><code>GET /api/v1/health</code> reports API status and the MongoDB connection state.</dd>
+                <dt>Prefix</dt>
+                <dd>Every product route is served under <code>/api/v1</code>.</dd>
+            </dl>
+        </main>
+    </body>
+</html>
