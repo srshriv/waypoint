@@ -1,0 +1,20 @@
+{
+	"name": "waypoint",
+	"version": "1.0.0",
+	"private": true,
+	"description": "Waypoint Deployment and Release Console - MERN Stack Monorepo",
+	"workspaces": [
+		"frontend",
+		"backend"
+	],
+	"scripts": {
+		"prestart": "bash setup.sh --start",
+		"start": "concurrently \"bun run dev:backend\" \"bun run dev:frontend\"",
+		"dev:frontend": "cd frontend && bun run dev",
+		"dev:backend": "cd backend && bun run dev",
+		"seed": "cd backend && bun run seed"
+	},
+	"devDependencies": {
+		"concurrently": "9.2.1"
+	}
+}

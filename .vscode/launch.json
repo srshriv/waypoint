@@ -1,0 +1,25 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "name": "Debug Waypoint Application",
+            "request": "launch",
+            "runtimeExecutable": "bun",
+            "runtimeArgs": ["run", "start"],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "skipFiles": ["<node_internals>/**"]
+        },
+        {
+            "type": "node",
+            "name": "Debug Waypoint API",
+            "request": "launch",
+            "runtimeExecutable": "bun",
+            "runtimeArgs": ["run", "dev"],
+            "cwd": "${workspaceFolder}/backend",
+            "console": "integratedTerminal",
+            "skipFiles": ["<node_internals>/**"]
+        }
+    ]
+}
