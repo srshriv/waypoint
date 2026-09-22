@@ -1,0 +1,621 @@
+## [2026-09-21T01:00:10+0530] ONBOARDING COMPLETE
+
+AGREEMENT RECORDED: /Users/sristeeshrivastava/coderepo-react-node-waypoint
+Agent: Claude Code
+Stack: node
+System Time: 2026-09-21T01:00:10+0530
+
+## [2026-09-21T01:00:10+0530] SESSION START
+
+Agent: Claude Code
+Repo Root: /Users/sristeeshrivastava/coderepo-react-node-waypoint
+Branch: main
+Worktree: main
+Parent Agent: none
+Stack: node
+
+## [2026-09-21T01:00:10+0530] Read AGENTS.md and complete onboarding
+
+User Prompt (verbatim, secrets redacted):
+Read AGENTS.md in this repository completely and follow it.
+
+Agent Response Summary:
+Read AGENTS.md in full. Checked $HOME/hackerrank_react_node_application/log.txt and found no log file, so no AGREEMENT RECORDED line existed for this repo root and the section 3 onboarding flow was required. Presented the greeting, the current system time in ISO 8601 with timezone, and recited the seven ground rules verbatim, then asked the user to reply "I agree".
+
+Actions:
+* Read AGENTS.md
+* Ran: ls -la on repo root
+* Ran: check for $HOME/hackerrank_react_node_application/log.txt (absent)
+* Ran: date for ISO 8601 local time
+
+Context:
+tool=Claude Code
+branch=main
+repo_root=/Users/sristeeshrivastava/coderepo-react-node-waypoint
+worktree=main
+parent_agent=none
+
+## [2026-09-21T01:00:10+0530] User agreement recorded
+
+User Prompt (verbatim, secrets redacted):
+I agree
+
+Agent Response Summary:
+User agreed to the ground rules. Created the log directory and log file in the home directory, appended the ONBOARDING COMPLETE block with AGREEMENT RECORDED for this repo root, and appended a SESSION START entry. Transcript logging is now active for every subsequent user turn.
+
+Actions:
+* Created $HOME/hackerrank_react_node_application/log.txt
+* Appended ONBOARDING COMPLETE, SESSION START, and per-turn entries
+
+Context:
+tool=Claude Code
+branch=main
+repo_root=/Users/sristeeshrivastava/coderepo-react-node-waypoint
+worktree=main
+parent_agent=none
+
+## [2026-09-21T01:00:44+0530] Read governing documents after onboarding
+
+User Prompt (verbatim, secrets redacted):
+I agree
+
+Agent Response Summary:
+Continuation of the agreement turn. Read the remaining governing documents in the order the README prescribes: REQUIREMENTS.md (product brief and acceptance criteria), INSTRUCTIONS.md (reference repo study and hygiene rules), GUIDELINES.md (the acceptance contract), and skills/validate/SKILL.md (the verifier workflow). Noted that the React + Node reference calendar repository is already cloned at $HOME/coderepo-react-node-calendar-reference, and that this repo currently contains only the contract documents with no frontend/, backend/, transcripts/, hackerrank.yml, or setup.sh yet. Awaiting the user's product-domain decision before any implementation.
+
+Actions:
+* Read REQUIREMENTS.md
+* Read INSTRUCTIONS.md
+* Read README.md
+* Read GUIDELINES.md
+* Read skills/validate/SKILL.md
+
+Context:
+tool=Claude Code
+branch=main
+repo_root=/Users/sristeeshrivastava/coderepo-react-node-waypoint
+worktree=main
+parent_agent=none
+
+## [2026-09-21T01:06:11+0530] Study reference calendar feature; confirm Waypoint constraints and propose layout
+
+User Prompt (verbatim, secrets redacted):
+The domain is already approved by HackerRank, do not propose alternatives.
+
+Waypoint is a deployment and release management console. Once a build passes, teams still need a controlled way to move it through environments, catch a bad release before it reaches users, and recover quickly if something goes wrong, without relying on scattered scripts and manual tracking.
+
+Users are release managers and contributors within a workspace, demonstrated through the reference repo's profile switcher rather than multiple signed-in sessions.
+
+The eight approved capabilities:
+1. Role based access control: only users with the right role can approve a promotion or trigger a rollback; contributors can view but not act
+2. Projects and environments: organize work into projects, each with its own environments (development, staging, production)
+3. Background job pipeline: a deployment is queued as a background job and processed step by step, with automatic retries and exponential backoff on transient failures
+4. Controlled promotion between environments: a build only moves to the next environment once its health checks pass, only one promotion or rollback can happen on a given environment at a time, and clicking the same action twice by accident doesn't trigger it twice
+5. Atomic rollback: any previous successful deployment can be rolled back to as a single atomic operation, so a rollback never leaves an environment half updated
+6. Release history and diffing: a full history of every promotion and rollback, including who performed it, with any two releases comparable to see what changed
+7. Environment variables and secrets: managed separately per environment, with masking in the UI
+8. Operations dashboard: live build logs while a deployment runs, alongside an overview of recent deployments and environment status
+
+Hard constraints I want you to confirm back to me before writing code:
+- GUIDELINES.md 2.2: zero new dependencies. No job queue library, no Redis. The queue, retries and backoff are plain Node timers plus MongoDB.
+- GUIDELINES.md 4.4: no WebSockets. Live logs are polled, not streamed.
+- GUIDELINES.md 4.4: no multiple simultaneous signed-in sessions, so roles are demonstrated via profile switching.
+- The environment lock is a single atomic findOneAndUpdate on the environment document, not a separate lock service.
+- Idempotency is a unique index on a request key, catching Mongo error 11000, the same way calendar.service handles duplicate names.
+
+Do not write any code yet. First read the reference at ../coderepo-react-node-calendar-reference, specifically all five files in backend/src/features/calendars/, plus shared/middleware/profile-context.js and shared/errors/app-error.js. Then confirm the constraints above and propose the backend and frontend feature folder layout for Waypoint.
+
+Agent Response Summary:
+Read the five files in the reference backend/src/features/calendars/ (model, routes, controller, service, repository) plus shared/middleware/profile-context.js and shared/errors/app-error.js, and additionally app.js, shared/middleware/auth.js, shared/middleware/error-handler.js, shared/config/index.js, index.js, the root/frontend/backend manifests, hackerrank.yml, and the frontend source tree, to ground the layout proposal in real conventions. Confirmed all five hard constraints against the reference: the 11000 idempotency pattern is exactly calendar.service.js create/update, AppError(statusCode, code, message, details) is the error contract, and profile-context.js resolves request.profileId from the JWT against account.allowedProfileIds. Proposed the backend feature folders (auth, members, projects, environments, releases, deployments, jobs, variables, dashboard) and frontend feature folders mapped one-to-one onto the eight approved capabilities. Flagged three design decisions for confirmation: the backend dev watcher restarts the in-process job worker so jobs need lease-based recovery, secret masking must be server-side rather than client-side, and the reference ships no router so the console must use view state in App.jsx. No code written.
+
+Actions:
+* Read reference backend/src/features/calendars/{calendar.model,calendar.routes,calendar.controller,calendar.service,calendar.repository}.js
+* Read reference backend/src/shared/middleware/{profile-context,auth,error-handler}.js
+* Read reference backend/src/shared/errors/app-error.js
+* Read reference backend/src/{app.js,index.js}, shared/config/index.js
+* Read reference package.json, hackerrank.yml, backend/package.json, frontend/package.json
+* Read reference frontend/src/shared/api/client.js and features/calendar/calendar.api.js
+* Listed reference backend/src and frontend/src file trees
+
+Context:
+tool=Claude Code
+branch=main
+repo_root=/Users/sristeeshrivastava/coderepo-react-node-waypoint
+worktree=main
+parent_agent=none
+
+## [2026-09-21T01:35:09+0530] Restore rejected auth files; hold auth.service.js for review
+
+User Prompt (verbatim, secrets redacted):
+Write the other three as you had them. For auth.service.js, print the full file in the chat first so I can read it before you write it.
+
+Agent Response Summary:
+Rewrote the three files rejected alongside profile-context.js in the earlier batch: features/auth/auth.controller.js, features/auth/auth.routes.js, and shared/middleware/auth.js, each byte-for-byte as originally composed. Did not write features/auth/auth.service.js; printed its full contents in chat instead so the user can review the JWT signing, authentication, and profile-switch logic before it lands on disk. Scaffolding is paused at that review point; app.js, index.js, seed.js, the frontend, and the install-and-start verification remain outstanding.
+
+Actions:
+* Wrote backend/src/features/auth/auth.controller.js
+* Wrote backend/src/features/auth/auth.routes.js
+* Wrote backend/src/shared/middleware/auth.js
+* Printed backend/src/features/auth/auth.service.js in chat for review, not written
+
+Context:
+tool=Claude Code
+branch=main
+repo_root=/Users/sristeeshrivastava/coderepo-react-node-waypoint
+worktree=main
+parent_agent=none
+
+## [2026-09-21T01:36:53+0530] Reprint auth.service.js for review
+
+User Prompt (verbatim, secrets redacted):
+You said you printed auth.service.js for review but it did not appear. Print its full contents now and do not write it until I approve.
+
+Agent Response Summary:
+The file contents were included in the previous message but evidently did not render for the user, so reprinted backend/src/features/auth/auth.service.js in full, unchanged from the version described earlier. Still did not write the file to disk; it remains the only missing piece of the auth feature and scaffolding stays paused pending approval. No files changed this turn.
+
+Actions:
+* Reprinted backend/src/features/auth/auth.service.js in chat; no file written
+
+Context:
+tool=Claude Code
+branch=main
+repo_root=/Users/sristeeshrivastava/coderepo-react-node-waypoint
+worktree=main
+parent_agent=none
+
+
+## [2026-09-21T01:53:55+05:30] SESSION START
+
+Agent: Claude Code
+Repo Root: /Users/sristeeshrivastava/coderepo-react-node-waypoint
+Branch: main
+Worktree: main
+Parent Agent: none
+Stack: node
+
+## [2026-09-21T01:55:20+05:30] Scaffold the frontend; run clean install-and-start check
+
+User Prompt (verbatim, secrets redacted):
+Session restarted. Continue the scaffold from the frontend. When it is done, run the clean install-and-start check and report the result.
+
+(Follow-up in the same turn:)
+MongoDB runs in Docker as a container named waypoint-mongo on 127.0.0.1:27017. mongod is intentionally not installed locally. Do not try to install it or change setup.sh's mongod branch, that branch is for the HackerRank environment.
+
+Agent Response Summary:
+Confirmed auth.service.js had landed on disk, then scaffolded the whole frontend against the reference calendar conventions: index.html with a Waypoint boot screen, main.jsx, styles.css (dark default plus light theme, Waypoint palette), shared/api/client.js with waypoint-prefixed token storage, shared components (MaterialIcon, Modal, ConfirmationDialog), shared utils (identity, theme) and a roles constant. Wired the two capabilities whose backends exist: auth (login, session restore, logout) and profiles (picker, switching), plus a console shell with header, collapsible sidebar, and view-state navigation across all eight approved capabilities. Deliberately did not write API client modules for the seven unbuilt backend features, because GUIDELINES 7.3 has the verifier discover capabilities from frontend API clients; those sections render a PendingSection panel naming the backend folder they wait on. The Access section is real and reads GET /profiles to show the member roster and a role-based permission matrix. Left setup.sh untouched per the user's instruction and used the existing waypoint-mongo Docker container. Clean install-and-start check passed end to end.
+
+Actions:
+* Wrote frontend/index.html, frontend/src/main.jsx, frontend/src/styles.css, frontend/src/App.jsx
+* Wrote frontend/src/shared/api/client.js, shared/components/{MaterialIcon,Modal,ConfirmationDialog}.jsx, shared/utils/{identity,theme}.js, shared/constants/roles.js
+* Wrote frontend/src/features/auth/{auth.api.js,WorkspaceLogin.jsx}
+* Wrote frontend/src/features/profiles/{profile.api.js,ProfilePicker.jsx,ProfileAvatar.jsx}
+* Wrote frontend/src/features/console/{BrandMark,ConsoleHeader,ConsoleSidebar,ConsoleShell,PendingSection}.jsx and console-sections.js
+* Wrote frontend/src/features/access/AccessSection.jsx
+* Ran: bun install from a clean checkout (148 root packages; workspace deps under frontend/ and backend/node_modules)
+* Ran: bun run build in frontend (38 modules, 213.32 kB JS / 22.84 kB CSS, no warnings)
+* Ran: bun start (setup.sh created .env files, reused the running MongoDB, seeded 5 members and 5 accounts; API on 8000, Vite on 3000)
+* Verified: /api/v1/health returns database connected via both 8000 and the Vite proxy; login, GET /profiles, and POST /auth/switch-profile succeed; bad password and unauthenticated access both return 401
+
+Context:
+tool=Claude Code
+branch=main
+repo_root=/Users/sristeeshrivastava/coderepo-react-node-waypoint
+worktree=main
+parent_agent=none
+
+## [2026-09-21T02:00:24+05:30] Standing rule: no unbacked capability surfaces
+
+User Prompt (verbatim, secrets redacted):
+The pending API clients and Pending sections for unbuilt features are the orphans 1.2 exists to prevent, not evidence for 7.3. Keep them only if every one is backed end to end by the time we finish. If a feature slips, its client module and its section come out. Note that as a standing rule.
+
+Agent Response Summary:
+Accepted the correction. Re-read GUIDELINES 1.1, 1.2, and 7.3: section 1.2 is the governing rule ("Do not advertise a capability that is not implemented end to end"), while 7.3 is only the audit procedure applied to whatever surface exists, so it cannot justify creating surface. Withholding the stub API clients was right, but the seven PendingSection navigation entries advertise the same unbuilt capabilities and are the same orphan in another form. Recorded the standing rule in project memory: a frontend api module or console section may exist mid-build but must be backed end to end by the time the work is finished, and any feature that slips has both its client module and its section deleted. No code changed this turn; the seven pending sections stay as provisional scaffolding and are now on the clock. Also recorded the fixed eight-capability scope and the Docker MongoDB setup as project memories.
+
+Actions:
+* Read GUIDELINES.md sections 1.1, 1.2, 1.3, 7.3, 7.4
+* Wrote memory no-unbacked-capability-surfaces.md (feedback)
+* Wrote memory waypoint-approved-capabilities.md (project)
+* Wrote memory waypoint-local-mongodb.md (project)
+* Wrote memory MEMORY.md index
+* No application files changed
+
+Context:
+tool=Claude Code
+branch=main
+repo_root=/Users/sristeeshrivastava/coderepo-react-node-waypoint
+worktree=main
+parent_agent=none
+
+## [2026-09-21T02:09:03+05:30] Projects feature end to end; Pending badge dropped
+
+User Prompt (verbatim, secrets redacted):
+Let's do projects next, backend and frontend, end to end. Standard five files following the calendar conventions. Fields I want: ownerId, name, slug, description, repositoryUrl, archivedAt. Scope reads by the active profile like calendar.repository does with ownerId, and treat an invalid id as a 404 not a 400. Archive instead of hard delete. Replace the Projects pending section with a real one and drop its Pending badge.
+
+Agent Response Summary:
+Built the projects feature across the standard five backend files following calendar conventions, with the requested field set and ownerId scoping mirrored from calendar.repository (conditional spread on every read). Invalid ObjectIds raise 404 PROJECT_NOT_FOUND via an ensureId guard rather than a 400, and another owner's project also returns 404 so scoping does not leak existence. Archive and restore replace hard delete: archivedAt is a nullable Date, POST /:projectId/archive and /restore toggle it, editing an archived project is refused with 409 PROJECT_ARCHIVED. Two unique compound indexes (ownerId+slug, ownerId+name case-insensitive) with 11000 caught and disambiguated by keyPattern into distinct conflict codes. Mounted the router behind requireWorkspaceAuth plus resolveProfileContext, which puts that previously unused middleware into service. Seeded 11 realistic projects across all five owners including one archived. On the frontend added project.api.js, ProjectsSection.jsx, and ProjectEditor.jsx, flipped the Projects section to ready so its Pending badge is gone, and routed ConsoleShell to the real section. Verified with 33 live API assertions, a 21-case server-render smoke pass, a field-shape check against live records, and a restart baseline check. Browser verification was unavailable (user declined the Chrome extension) so the interactive pass is recorded as MANUAL.
+
+Actions:
+* Wrote backend/src/features/projects/{project.model,project.repository,project.service,project.controller,project.routes}.js
+* Edited backend/src/app.js to mount /api/v1/projects behind requireWorkspaceAuth + resolveProfileContext
+* Edited backend/src/scripts/seed.js to seed 11 projects (10 active, 1 archived) across 5 owners
+* Wrote frontend/src/features/projects/{project.api.js,ProjectsSection.jsx,ProjectEditor.jsx}
+* Wrote frontend/src/shared/utils/format.js (formatDate, slugify)
+* Edited frontend/src/features/console/console-sections.js (projects status pending -> ready)
+* Edited frontend/src/features/console/ConsoleShell.jsx to render ProjectsSection
+* Edited frontend/src/styles.css for the toolbar, project cards, and editor modal
+* Ran: 33 live API assertions covering scoping, validation, conflicts, 404-on-invalid-id, archive/restore - all passed
+* Ran: 21-case react-dom/server render smoke pass - all passed
+* Ran: frontend production build (42 modules) - passed
+* Ran: restart baseline check - ad hoc test rows removed, 11 projects restored
+* Ran: orphan audit - every backend product route has a frontend consumer
+
+Context:
+tool=Claude Code
+branch=main
+repo_root=/Users/sristeeshrivastava/coderepo-react-node-waypoint
+worktree=main
+parent_agent=none
+
+## [2026-09-21T02:17:17+05:30] Environments feature with lock primitives and require-role
+
+User Prompt (verbatim, secrets redacted):
+Now environments. Each belongs to a project and has a rank that sets promotion order, so development 0, staging 1, production 2. Fields: projectId, name, rank, requiresHealthCheck, currentReleaseId, currentDeploymentId, lockedByDeploymentId, lockedAt, leaseExpiresAt. Unique on projectId+rank and projectId+name. Add claimLock and releaseLock to the repository as single atomic findOneAndUpdate calls, claimLock matching on the lock being free or the lease expired and returning null if someone else holds it. Don't write any service logic that uses them yet, deployments owns that. Creating and reordering environments should be release-manager only, so write require-role.js now since this finally gives it a real consumer.
+
+Agent Response Summary:
+Built the environments feature across the standard five files, nested under projects so project ownership gates every read and write. Both requested unique compound indexes are in place (projectId+rank, projectId+name case-insensitive) with 11000 disambiguated by keyPattern. claimLock and releaseLock are single atomic findOneAndUpdate calls in the repository with no service consumer, as instructed; claimLock matches free, lease-expired, or same-holder (the third clause makes "returns null if someone else holds it" literally true and keeps retries idempotent for the deployments work), and releaseLock refuses a non-holder so a late worker cannot unlock another deployment. Wrote shared/middleware/require-role.js and applied requireRole("releaseManager") to create and reorder only, leaving PATCH open to contributors as specified. Reorder rewrites ranks in two bulkWrite passes because the rank index is unique; a negative parking pass avoids intermediate collisions. Seeded 3 environments per project (33 total) with health checks off in development and on for staging and production. Built the frontend section end to end with a project picker, rank-ordered cards, health-check toggle, reorder controls and role-gated affordances, then flipped Environments to ready. Ported SelectMenu from the reference, which now has a real consumer.
+
+Actions:
+* Wrote backend/src/shared/middleware/require-role.js
+* Wrote backend/src/features/environments/{environment.model,environment.repository,environment.service,environment.controller,environment.routes}.js
+* Edited backend/src/app.js to mount /api/v1/projects/:projectId/environments
+* Edited backend/src/scripts/seed.js to seed 33 environments
+* Wrote frontend/src/features/environments/{environment.api.js,EnvironmentsSection.jsx,EnvironmentEditor.jsx}
+* Wrote frontend/src/shared/components/SelectMenu.jsx; added edit, lock, lock_open, arrow_upward, arrow_downward icons
+* Edited console-sections.js (environments -> ready), ConsoleShell.jsx, styles.css
+* Ran: 33 live API assertions covering scoping, role gating, conflicts, reorder validation - all passed
+* Ran: 15 repository-level lock assertions including 12-way parallel claim and release races - all passed, exactly one winner each
+* Ran: 23-case render smoke pass - all passed
+* Ran: frontend production build (46 modules) - passed
+* Ran: restart baseline - 33 environments restored, no ad hoc rows, no stuck locks
+* Noted: claimLock and releaseLock have no consumer yet and are on the clock for the deployments feature
+
+Context:
+tool=Claude Code
+branch=main
+repo_root=/Users/sristeeshrivastava/coderepo-react-node-waypoint
+worktree=main
+parent_agent=none
+
+## [2026-09-21T02:20:15+05:30] Gate all environment mutation; frontend-always-included standing rule
+
+User Prompt (verbatim, secrets redacted):
+Keep the same-holder clause on claimLock, your reasoning is right. Two questions. First, why is PATCH open to contributors? Renaming an environment or toggling requiresHealthCheck changes whether a promotion gate applies, which is a release-manager decision. I'd gate the health-check toggle at minimum. Second, you wrote the frontend unprompted because of the orphan rule. That was the right call, but from now on assume frontend is always included unless I say otherwise, rather than treating it as an exception.
+
+Agent Response Summary:
+Answered the PATCH question honestly: I had gated exactly the two verbs named earlier (creating and reordering) and never examined what the PATCH body could change, so requiresHealthCheck slipped through even though flipping it off would permit an ungated promotion into production. Went one step past the requested floor and gated the entire PATCH route to release managers rather than doing a field-level check, because a route-level gate is easier to audit and renaming is also a release-manager concern; said so explicitly and offered to loosen it. Disabled the rename and health-check controls for contributors in the UI with explanatory titles and reworded the role note. Separately noticed the Access permission matrix advertised four capabilities that do not exist yet (queue deployment, promote, rollback, secrets), which is the same orphan pattern the standing rule forbids, so trimmed it to the four rules the API actually enforces today. Recorded both standing rules in memory: frontend is always in scope by default, and role gating follows what a payload controls rather than the verbs the user enumerated.
+
+Actions:
+* Edited backend/src/features/environments/environment.routes.js to gate PATCH with requireRole("releaseManager")
+* Edited frontend/src/features/environments/EnvironmentsSection.jsx to disable rename and health-check toggle for contributors
+* Edited frontend/src/features/access/AccessSection.jsx to trim the permission matrix to enforced rules only
+* Wrote memory frontend-always-included.md (feedback)
+* Wrote memory role-gating-covers-configuration.md (feedback)
+* Updated memory MEMORY.md index
+* Ran: environments API suite, now 36 assertions - all passed, including contributor PATCH refused and state unchanged
+* Ran: 23-case render smoke pass - all passed
+* Ran: frontend production build - passed
+* Ran: reseed to baseline - 33 environments, 11 projects
+
+Context:
+tool=Claude Code
+branch=main
+repo_root=/Users/sristeeshrivastava/coderepo-react-node-waypoint
+worktree=main
+parent_agent=none
+
+## [2026-09-21T20:57:53+05:30] Deployments part one: worker pipeline, logs, idempotency
+
+User Prompt (verbatim, secrets redacted):
+Deployments, part one. Just get a single deployment running end to end, no promotion or rollback yet. A deployment is one attempt to put a release on an environment. Fields: projectId, environmentId, releaseId, previousReleaseId, kind, status (queued, building, deploying, live, failed, superseded), steps, requestKey, triggeredBy, queuedAt, finishedAt. Log lines in their own collection with a sequence number, polled with a cursor so the UI only gets new ones. job.model.js, job.repository.js and job.worker.js as non-routed modules inside deployments/. Worker is a setTimeout loop claiming jobs from MongoDB, lease recovery so a restart reclaims instead of stranding, retries with backoff written as nextRunAt. Steps and logs generated locally in deployment-steps.js, with a seeded transient failure so retries are visible. Unique index on requestKey, catch 11000 and return the existing deployment, frontend too. Stop when a deployment completes with logs appearing and show me.
+
+Agent Response Summary:
+Built deployments part one end to end. Deployment and DeploymentLog models with the requested field set, logs in their own collection keyed by a monotonic per-deployment sequence read with an after cursor. job.model.js, job.repository.js and job.worker.js are non-routed modules inside deployments/: the worker is a setTimeout loop whose claim is a single atomic findOneAndUpdate that also matches running jobs with an expired lease, which is the restart-recovery path; retries are stored as nextRunAt with exponential backoff. deployment-steps.js generates all five steps and their log lines locally with the push step seeded to fail on the first job attempt. requestKey carries a unique index, 11000 is caught and the original deployment returned with HTTP 200 and reused true instead of 201, and the frontend holds one key across retries. The worker takes the environment promotion lock via claimLock and releases it in a finally, which clears the two previously unconsumed lock primitives. Contributors may deploy to rank 0 only; later stages are release-manager only, checked in the service because it depends on the environment rank. Caught a false positive in the first lease-recovery run: pkill -f "bun src/index.js" does not match "bun --watch src/index.js", so an old worker finished the job; fixed the pattern and reran, getting a genuine 13s reclaim.
+
+Actions:
+* Wrote backend/src/features/deployments/{deployment.model,deployment-log.model,deployment.repository,deployment.service,deployment.controller,deployment.routes,deployment-steps,job.model,job.repository,job.worker}.js
+* Edited backend/src/app.js, index.js (worker start/stop), scripts/seed.js (clear runtime artifacts)
+* Wrote frontend/src/features/deployments/{deployment.api.js,deployment-status.js,DeploymentsSection.jsx,DeploymentLogView.jsx}
+* Edited console-sections.js (deployments -> ready), ConsoleShell.jsx, AccessSection.jsx, styles.css, MaterialIcon.jsx
+* Ran: 37 deployments API assertions - all passed
+* Ran: lease recovery test - job reclaimed 13s after kill, interrupted step re-ran, deployment reached live
+* Ran: 26-case render smoke pass, frontend production build - all passed
+* Ran: restart baseline - deployments, logs and jobs cleared, environments back to holding no release
+
+Context:
+tool=Claude Code
+branch=main
+repo_root=/Users/sristeeshrivastava/coderepo-react-node-waypoint
+worktree=main
+parent_agent=none
+
+## [2026-09-21T21:12:03+05:30] Promotion and rollback
+
+User Prompt (verbatim, secrets redacted):
+Now promotion and rollback. [Full spec recorded: promotion moves exactly one rank up, gated on the target environment's health check having passed on the source, rank skips are a 400; the promoted release is the one currently live on the source, snapshotted at trigger time; rollback returns an environment to an earlier successful deployment on that same environment, the previously live deployment becomes superseded not failed, rolling back to something already live is a 409, rollback is deliberately not health-check gated; both claim the environment lock before writing anything and release it in a finally, lock held is a 409 naming the holding deployment and lease expiry; both release-manager only enforced in the service; add promote and rollback to the Access matrix.]
+
+Agent Response Summary:
+Implemented promotion and rollback in the deployments service. Promotion requires target.rank === source.rank + 1 and otherwise returns 400 PROMOTION_RANK_SKIP naming the rank that was required; the promoted release is read from the source environment and snapshotted onto the deployment at trigger time, and the controller schema is strict so no releaseId can be supplied by the client. Rollback accepts only deployments that went live on the same environment, refuses an already-live target with 409 ROLLBACK_TARGET_ALREADY_LIVE, and is not health-check gated. Superseding was generalized into the worker: whenever any deployment goes live, whatever it replaced on that environment moves from live to superseded, which covers deploy, promote and rollback uniformly. Both triggers hold the environment lock across their read-and-write via a withEnvironmentLock helper that releases in a finally and raises 409 ENVIRONMENT_LOCKED carrying lockedByDeploymentId, lockedAt and leaseExpiresAt. The lock token is deliberately a fresh ObjectId rather than the new deployment id, because claimLock has a same-holder clause and reusing the deployment id would let the worker take the lock while the trigger still held it and let the trigger's release drop the worker's lock. Role checks live in the service ahead of target resolution. Extended the API client to carry error code and details so the UI can name the blocking deployment and its lease. Added promote and rollback rows to the Access matrix.
+
+Actions:
+* Edited deployment.service.js: promote, rollback, rollbackTargets, withEnvironmentLock, queueDeployment, requireReleaseManager, loadEnvironment
+* Edited deployment.controller.js, deployment.routes.js, deployment.repository.js (listRollbackTargets, supersede)
+* Edited job.worker.js to supersede the replaced deployment; deployment-steps.js for kind-aware log lines
+* Edited frontend shared/api/client.js to attach error code, details and status
+* Wrote frontend/src/features/deployments/RollbackDialog.jsx
+* Edited DeploymentsSection.jsx, deployment.api.js, deployment-status.js, AccessSection.jsx, console-sections.js, styles.css
+* Ran: 33 promotion and rollback assertions - all passed
+* Ran: 8 lock-contention assertions - the 409 names the holding deployment, its lease and the environment
+* Ran: 27-case render pass, production build, restart baseline - all passed
+* Ran: full lifecycle demo - deploy, rank-skip refusal, two promotions carrying one release, supersede, already-live refusal, rollback
+* Flagged for the user: the health-check gate wording was ambiguous and the chosen reading is documented for confirmation
+
+Context:
+tool=Claude Code
+branch=main
+repo_root=/Users/sristeeshrivastava/coderepo-react-node-waypoint
+worktree=main
+parent_agent=none
+
+## [2026-09-21T23:42:57+05:30] Releases: immutable build artifacts and the diff
+
+User Prompt (verbatim, secrets redacted):
+Releases next. Right now releaseId is a minted ObjectId with nothing behind it, so this is what makes those real. A release is an immutable build artifact belonging to a project: version, commitSha, commitMessage, author, and a changes array of path plus changeType. Created once, never mutated. Unique on projectId plus version. Deployments reference a real release instead of minting an id. The diff compares any two releases in a project, showing what changed between them. Seed a realistic set per project with varied change sets so the diff has something to show.
+
+Agent Response Summary:
+Built the releases feature across the standard five files with the requested field set, author kept as a string of commit metadata rather than a Member reference to match the naming convention used for every other ref in the schema. Immutability is enforced rather than merely intended: there is no PATCH or DELETE route, the repository exposes no update method, and pre hooks on findOneAndUpdate, updateOne, updateMany and replaceOne throw, which was verified directly against the model. Unique compound index on projectId plus version, so the same version can exist in different projects. Deployments no longer mint an ObjectId; the trigger now requires a releaseId and resolves it through releaseService.requireInProject, so an unknown or foreign release is a 404. Promotion and rollback already carried ids forward and now carry real ones. The diff is a range comparison rather than a two-way set comparison: it orders the pair by createdAt, collects every release after the baseline up to and including the target, and collapses all their changes to one entry per path with a net change type plus the list of releases that touched it. Seeded 52 releases across 11 projects with per-project source trees and deterministic but varied change sets, each release on a distinct timestamp so the range is well defined.
+
+Actions:
+* Wrote backend/src/features/releases/{release.model,release.repository,release.service,release.controller,release.routes}.js
+* Wrote backend/src/scripts/release-seed-data.js; edited seed.js to seed 52 releases
+* Edited app.js to mount /api/v1/projects/:projectId/releases
+* Edited deployment.service.js and deployment.controller.js so deploy requires a real releaseId
+* Wrote frontend/src/features/releases/{release.api.js,ReleasesSection.jsx,ReleaseDiff.jsx,ReleaseEditor.jsx}
+* Edited DeploymentsSection.jsx to add a release picker and show versions; deployment.api.js, ConsoleShell.jsx, console-sections.js, AccessSection.jsx, styles.css
+* Ran: 49 releases assertions - all passed
+* Ran: 5 model-level immutability assertions - every update path refused, document unchanged
+* Ran: regression across projects (33), environments (36), deployments (37), promotion and rollback (33) - all passed
+* Ran: 29-case render pass, production build, restart baseline - all passed
+* Investigated a 1-failure environments result during the regression batch and confirmed it was test pollution, since environments-check creates an environment and does not clean up; re-ran on a fresh baseline for 36 of 36
+* Corrected a bad regex patch of two older test scripts that had passed environment ids as project ids and left an undefined variable
+
+Context:
+tool=Claude Code
+branch=main
+repo_root=/Users/sristeeshrivastava/coderepo-react-node-waypoint
+worktree=main
+parent_agent=none
+
+## [2026-09-21T23:54:43+05:30] Fix test pollution; deterministic suite runner
+
+User Prompt (verbatim, secrets redacted):
+Keep author as a string, commit metadata is the right framing. Also fix the test pollution before we go further. Every suite should clean up what it creates, or run against a fresh baseline. Order-dependent regression runs will bite us during the final validator pass.
+
+Agent Response Summary:
+Took the fresh-baseline option rather than per-suite cleanup, because cleanup is skipped whenever a suite fails partway and would leave exactly the order dependence being removed. Wrote run-suites.mjs, which reseeds before every suite, waits for the deployment worker to go idle before each reseed so an in-flight job cannot write to a deployment the reseed just deleted, runs each suite in its own process, prints a summary, and leaves the database clean. Added suite-baseline.mjs with requirePristineBaseline(), called by all six API suites, so a dirty database fails fast with one message naming what drifted instead of a scatter of assertion failures. The guard immediately caught its own first bug: I had expected 10 active projects when reads are profile-scoped and Avery sees 2. Also found and fixed stale scripts that still used the pre-releases deploy signature: lock-409.mjs was failing outright, and trigger-one.mjs, deploy-run.mjs and lifecycle.mjs were all broken, with trigger-one.mjs being what lease-recovery.sh drives. Verified determinism by running the full harness twice back to back for identical results, verified the guard fires by deliberately creating a stray project, and re-ran lease-recovery end to end.
+
+Actions:
+* Wrote scratchpad run-suites.mjs (reseeding runner), suite-baseline.mjs (pristine-baseline guard), README.md (how to run the harness)
+* Added the guard call to projects, environments, releases, deployments, promotion and lock-409 suites
+* Fixed lock-409.mjs, trigger-one.mjs, deploy-run.mjs and lifecycle.mjs for the releaseId requirement introduced with releases
+* Corrected the guard's project-count expectation after it flagged profile-scoped reads
+* Ran: full harness twice - 216 assertions passed, 0 failed across 8 suites, identical both runs
+* Ran: negative test - a stray project makes every suite refuse to start with a clear message
+* Ran: lease-recovery.sh - reclaimed 14.4s after the kill, deployment reached live
+* No application code changed this turn; author stays a string as confirmed
+
+Context:
+tool=Claude Code
+branch=main
+repo_root=/Users/sristeeshrivastava/coderepo-react-node-waypoint
+worktree=main
+parent_agent=none
+
+## [2026-09-22T00:06:45+05:30] Variables and secrets with server-side masking
+
+User Prompt (verbatim, secrets redacted):
+Variables next. Per environment, key and value, with isSecret. Unique on environmentId plus key, keys uppercase. Masking is server-side, so the list endpoint never returns a secret's real value, only a preview. Revealing is a separate explicit request, release-manager only. Creating and editing variables is release-manager only too, same reasoning as environment config. Seed a realistic set per environment with a few secrets among them.
+
+Agent Response Summary:
+Built the variables feature across the standard five files, nested under environments so project ownership gates every read and write. The value field carries select:false, mirroring how WorkspaceAccount holds passwordHash, so a careless query cannot load a secret; only two repository methods select it, and the list path masks in the service before anything leaves. A secret's list entry carries value null plus a preview of eight bullets and the last four characters when the value is at least twelve long, and valueLength. Reveal is POST rather than GET so secrets stay out of URLs, caches and proxy logs, and is release-manager only, as are create, edit and delete, all gated at the route since none of those checks depend on the record. Reading the masked list stays open to contributors, since they need to know which keys an environment sets and non-secret values are not sensitive. Keys are uppercased by both the schema and the zod transform, so a lowercase key is normalised rather than rejected. Seeded 204 variables across 33 environments, 48 of them secrets, with values that vary by environment rank and deterministic obviously-fake tokens for the secrets.
+
+Actions:
+* Wrote backend/src/features/variables/{variable.model,variable.repository,variable.service,variable.controller,variable.routes}.js
+* Wrote backend/src/scripts/variable-seed-data.js; edited seed.js to seed 204 variables
+* Edited app.js to mount the nested variables router
+* Wrote frontend/src/features/variables/{variable.api.js,VariablesSection.jsx,VariableEditor.jsx}
+* Edited console-sections.js, ConsoleShell.jsx, AccessSection.jsx, styles.css as individual edits after a batched multi-file edit was rejected
+* Ran: 51 variables assertions - all passed, including fetching every secret then asserting none of those values appear in the raw list response body
+* Ran: full harness - 267 assertions, 0 failed across 9 suites
+* Ran: 30-case render pass, production build, orphan audit - all clean
+
+Context:
+tool=Claude Code
+branch=main
+repo_root=/Users/sristeeshrivastava/coderepo-react-node-waypoint
+worktree=main
+parent_agent=none
+
+## [2026-09-22T00:20:37+05:30] Operations dashboard; all eight capabilities complete
+
+User Prompt (verbatim, secrets redacted):
+Dashboard last. It reads everything else and owns no data, so no model, same shape as insights/ in the reference: controller, service, repository. Environment status across every project the profile can see; recent deployment activity across projects with kind, status, release version, environment and who triggered it; queue health read from jobRepository directly the way calendar.service reads eventRepository; counts that make the console feel alive on open, my call on which; empty state matters since a fresh seed has zero deployments; then the nav should read all ready and the Access matrix should be complete.
+
+Agent Response Summary:
+Read the reference insights feature first and matched its shape exactly: controller, service, repository, routes, and no model. dashboard.repository.js reads other features' models directly and holds the cross-collection queries, while dashboard.service.js composes them and reads jobRepository directly for queue health, adding countByStatus, countRetried and oldestPending to that repository so the job modules finally have a visible consumer without a route of their own. Everything is scoped to the acting profile's active projects, since archived projects are not operational; archived are still counted separately so the number is not silently lost. Chose five tiles a release manager would actually want: active projects, environments live as a fraction of total, releases cut, deployments today with all-time as a hint, and success rate over seven days carrying its sample size. Success rate returns null rather than a misleading zero percent when nothing has finished, and superseded counts as a success since it shipped and was later replaced. For the empty state the dashboard swaps the tiles for a readiness panel that states the real numbers already in place and points at the next action, rather than rendering a wall of zeros. With dashboard ready, PendingSection became unreachable, so removed it along with the Pending nav badge and the now-unused status and backend fields on every section entry.
+
+Actions:
+* Wrote backend/src/features/dashboard/{dashboard.repository,dashboard.service,dashboard.controller,dashboard.routes}.js
+* Edited job.repository.js to add countByStatus, countRetried, oldestPending
+* Edited app.js to mount /api/v1/dashboard
+* Wrote frontend/src/features/dashboard/{dashboard.api.js,DashboardSection.jsx,EnvironmentStatusGrid.jsx}
+* Deleted frontend/src/features/console/PendingSection.jsx; edited ConsoleShell.jsx and ConsoleSidebar.jsx to drop the pending path
+* Rewrote console-sections.js without the dead status and backend fields
+* Edited styles.css for stat tiles, readiness panel, queue strip, status grid and activity list
+* Ran: 38 dashboard assertions - all passed, including in-flight state and cross-project activity
+* Ran: full harness - 305 assertions, 0 failed across 10 suites
+* Ran: 32-case render pass, production build, orphan audit, unreferenced-component scan - all clean
+* All eight approved capabilities are now backed end to end and every nav section is ready
+
+Context:
+tool=Claude Code
+branch=main
+repo_root=/Users/sristeeshrivastava/coderepo-react-node-waypoint
+worktree=main
+parent_agent=none
+
+## [2026-09-22T02:09:05+05:30] Seed deployment history so the console opens populated
+
+User Prompt (verbatim, secrets redacted):
+Seed some deployment history so the console looks alive on first open. Right now a fresh seed shows zero deployments everywhere, so the dashboard, releases and deployment views all open empty. A few completed deployments per project across environments, at least one failed, some superseded by later ones, with their log lines so the log view has something to show. Environments should have a current release where it makes sense. Keep it deterministic, and update the baseline guard and restart checks since the expected counts change.
+
+Agent Response Summary:
+Wrote deployment-seed-data.js, which describes history as an ordered list of events per project and replays them. Replaying is what gives correct supersede semantics for free: when an event goes live on an environment, whatever was live there is marked superseded, exactly as the worker does. Four shapes keep the fleet from looking uniform: fully promoted and settled, fully promoted with the newest build failing, never promoted to production, and early days with development only. My first attempt used one base script for every project, which put a release on all 33 environments; the shapes fix that, leaving 26 of 33 held and 7 genuinely empty. Log lines are generated through the real deployment-steps helpers, so seeded logs are identical in shape to worker output, including the push retry the worker always performs and, for the failed deployment, four attempts ending in No attempts remaining. Every seeded deployment and its job are terminal, so the running worker's claim query can never match them, which was verified by watching the worker for eight seconds after a restart. Extracted ReadyToDeployPanel from DashboardSection so the empty-state branch stays covered by the render pass now that a fresh seed is no longer empty. Updated the baseline guard for the new expected counts and fixed fourteen stale assertions across the dashboard and promotion suites.
+
+Actions:
+* Wrote backend/src/scripts/deployment-seed-data.js; edited seed.js to seed 54 deployments, 1576 log lines and 54 terminal jobs
+* Edited seed.js clearDatabase comment, since deployment history is now seeded rather than a runtime artifact
+* Wrote frontend/src/features/dashboard/ReadyToDeployPanel.jsx; edited DashboardSection.jsx to use it
+* Updated suite-baseline.mjs for the new expected counts, adding superseded, in-flight and holding-a-release checks
+* Rewrote dashboard-check.mjs against the populated baseline; fixed two promotion-check assumptions
+* Added the empty-state branch to the render pass via ReadyToDeployPanel
+* Ran: full harness - 316 assertions, 0 failed across 10 suites
+* Ran: determinism check - two independent seeds produce an identical structural fingerprint
+* Ran: restart check - stray project and ad-hoc deployment cleared, all 54 seeded deployments intact
+* Ran: lease-recovery against the seeded baseline, 33-case render pass, production build - all passed
+
+Context:
+tool=Claude Code
+branch=main
+repo_root=/Users/sristeeshrivastava/coderepo-react-node-waypoint
+worktree=main
+parent_agent=none
+
+## [2026-09-22T02:22:07+05:30] Polish and audit pass across every screen
+
+User Prompt (verbatim, secrets redacted):
+Polish and audit pass now. Go screen by screen rather than in one sweep, and tell me what you changed on each. For every interactive surface check the states: loading, empty, disabled, validation, success, confirmation, error. Some exist already, so this is an audit, not a rewrite. Flag anything missing rather than assuming it's fine. Check light mode properly. Every screen, plus dialogs, menus, overlays and error states, since those are easy to miss. Check narrow widths, no horizontal page overflow at common mobile sizes. Keyboard access and labels on every control. Also audit for dead code, unused imports, leftover debugging output, American English throughout. Do not add dependencies and do not restructure features. This is a finishing pass.
+
+Agent Response Summary:
+Audited every screen and applied seven fixes. Dead code: removed an unused formatDate import in DeploymentsSection, two dead CSS rule groups left behind when PendingSection was deleted (console-nav-flag and pending-section-target, including a mobile override), eleven uncalled backend repository methods (every deleteAll and insertMany, since the seed talks to models directly, plus countActiveForEnvironment, findByDeploymentId, release findByIds and job findById) and the unused workerIdentity export. Accessibility: three buttons in ProfilePicker had no type attribute; RollbackDialog had no data-autofocus so Modal focused nothing on open, fixed by marking Cancel the way ConfirmationDialog does, after first trying the radio and realising the targets load asynchronously so no radio exists at mount; the profile menu closed on Escape without returning focus to its trigger, unlike SelectMenu. Confirmation coverage: promote fired immediately while rollback had a dialog, so added a ConfirmationDialog naming the source release, the target environment and its rank and whether that environment requires a health check. Verified light mode by checking for hard-coded colours outside the theme blocks and found only three, all deliberately theme-neutral. Verified narrow widths by checking every fixed and minimum width against a 320px viewport; all risky rules already had mobile overrides and the flex containers wrap rather than overflow. Flagged one thing rather than changing it: the password field uses type=text with -webkit-text-security, inherited verbatim from the reference repository.
+
+Actions:
+* Removed unused import in features/deployments/DeploymentsSection.jsx
+* Removed dead .console-nav-flag and .pending-section-target rules from styles.css
+* Added type=button to three ProfilePicker buttons
+* Added data-autofocus to RollbackDialog's Cancel button
+* Added focus return on Escape to the ConsoleHeader profile menu
+* Added a promote ConfirmationDialog to DeploymentsSection
+* Removed 11 uncalled repository methods and the workerIdentity export across the backend
+* Ran: full harness 316 assertions 0 failed, render pass 33 of 33, production build, all after the cleanup
+* Swept: zero console.log or debugger in frontend, zero TODO or FIXME, zero British spellings, zero buttons without type, zero unlabeled inputs, zero unused frontend exports
+
+Context:
+tool=Claude Code
+branch=main
+repo_root=/Users/sristeeshrivastava/coderepo-react-node-waypoint
+worktree=main
+parent_agent=none
+
+## [2026-09-22T23:14:11+05:30] README as a validator deliverable
+
+User Prompt (verbatim, secrets redacted):
+README next. It is a hard validator gate, so treat it as a deliverable rather than documentation. All eight sections the guidelines require: product identity, technology stack with real versions and what each does, annotated project structure, prerequisites including the MongoDB expectation on 127.0.0.1:27017, MongoDB behavior including that a restart restores the seeded baseline and that this is intentional, run instructions using the exact commands hackerrank.yml declares, command reference, and seeded access with credentials and profile selection. Do not describe a capability, command, port or path that does not exist, and keep it concise since validation discovers the product surface from the code itself.
+
+Agent Response Summary:
+Gathered every fact from the repository before writing: dependency versions from the three package.json files, the exact install and run commands from hackerrank.yml, the real directory tree, .env.example contents, seeded members and roles from the database, and live seed output. Wrote all eight required sections. Kept it to what exists: no feature inventory, no endpoint list beyond the health check, and no aspirational claims. Then verified the README against the repository mechanically rather than by eye. Every path named in the annotated tree exists. All ten claimed dependency versions match package.json exactly. Ports 3000, 8000 and 27017 were each traced to the file that sets them. All eight seeded counts were re-checked against a live reseed. The member table was diffed against the database. Behavioral claims were traced to the code that enforces them: the contributor first-stage rule, the release-manager gates on environments, variables, promote and rollback, that setup.sh --start equals --seed, and that dev:backend and dev:frontend skip the reseed because prestart only fires on start. Confirmed no queue, cache or websocket dependency exists to support the claim that the worker is plain timers and atomic Mongo updates. Finally ran the documented commands from a genuinely clean checkout, having deleted node_modules and both .env files, and confirmed install, seed, start, the proxy and the production build all work with no manual edit. Three dependencies (cors, dotenv, react-dom) were initially unmentioned and were folded into the stack table.
+
+Actions:
+* Rewrote README.md with all eight guideline-required sections
+* Verified: 32 tree paths exist, 10 dependency versions match, 8 seed counts match a live reseed, 5 member rows match the database
+* Verified: every command in the reference table resolves to a real script
+* Verified: behavioral claims map to the enforcing code; no queue, cache or websocket dependency
+* Ran: clean-checkout install and seed, bun start, proxy check, production build - all passed
+* Noted: transcripts/ is deliberately absent from the tree since it does not exist yet
+
+Context:
+tool=Claude Code
+branch=main
+repo_root=/Users/sristeeshrivastava/coderepo-react-node-waypoint
+worktree=main
+parent_agent=none
+
+## [2026-09-22T23:23:01+05:30] Export the transcript into transcripts/
+
+User Prompt (verbatim, secrets redacted):
+Create transcripts/ and copy the AGENTS.md log file into it, without editing it during the copy. Then add transcripts/ to the README tree, since it now exists.
+
+Agent Response Summary:
+Scanned the source log for secrets before copying and found none: no JWTs, no private keys, no bearer tokens, and neither the seeded demo password nor the JWT_SECRET value appear anywhere in it. Created transcripts/ and copied the log with cp, making no edits, then proved the copy is unmodified by comparing sha256 digests and running cmp; both agree the files are byte identical. Confirmed .gitignore does not exclude the copy, so it will actually reach git, which matters because AGENTS.md section 2 makes this copy the only point at which the log enters version control. Added transcripts/ to the README tree with an annotation and re-verified that all 34 paths named in the tree exist, plus that the repository now satisfies the AGENTS.md section 6.1 layout in full. Logged this turn before re-copying, so the exported transcript includes the export itself rather than trailing one entry behind.
+
+Actions:
+* Scanned $HOME/hackerrank_react_node_application/log.txt for secrets; none found
+* Created transcripts/ and copied the log to transcripts/log.txt unedited
+* Verified the copy byte for byte with sha256 and cmp
+* Confirmed the copy is not gitignored and shows as untracked, ready to commit
+* Edited README.md to add transcripts/ to the annotated tree
+* Re-verified all 34 README tree paths and the section 6.1 repository layout
+* Re-copied the log after writing this entry so the export stays current
+
+Context:
+tool=Claude Code
+branch=main
+repo_root=/Users/sristeeshrivastava/coderepo-react-node-waypoint
+worktree=main
+parent_agent=none
+
+## [2026-09-22T23:29:45+05:30] Fix sidebar collapse leaving an empty gutter
+
+User Prompt (verbatim, secrets redacted):
+Bug on the console layout: collapsing the sidebar leaves the main content at its original left offset instead of reflowing to fill the width, so there is a large empty gutter and collapsing gains nothing.
+
+Agent Response Summary:
+Diagnosed the cause rather than patching symptoms. The shell's first grid track was auto and the collapse worked by giving the sidebar margin-left -248px. That translated the sidebar out of view but the auto track kept sizing itself from the item's explicit 248px width, so the track never shrank and the main column kept its original offset, which is exactly the gutter reported. Changed the shell to a definite 248px first track and added a collapsed rule setting it to 0, with a transition on grid-template-columns, so the thing being animated is the track itself and the main column must reflow. The sidebar now follows its track at width 100 percent while the inner keeps its fixed 248px so the nav does not squash during the animation. Removed the negative-margin rule and its transition. Caught a specificity trap while doing it: the collapsed selector has two classes and would have beaten the single-class mobile rule inside the media query, reinstating a two-column grid on narrow screens where the sidebar is meant to be a horizontal strip, so the media query now lists both selectors. Also closed a real gap the original collapse left: the hidden nav stayed focusable and present in the accessibility tree, so Tab landed on invisible controls. The sidebar is now inert while collapsed, and the toggle reports aria-expanded and aria-controls pointing at it.
+
+Actions:
+* Edited styles.css: definite 248px track, .console-shell.sidebar-collapsed sets it to 0, transition moved to grid-template-columns
+* Edited styles.css: .console-sidebar now width 100 percent; removed the margin-left -248px rule
+* Edited styles.css: mobile media query lists both .console-shell and .console-shell.sidebar-collapsed so specificity cannot break the narrow layout
+* Edited ConsoleSidebar.jsx to accept collapsed and set inert plus an id
+* Edited ConsoleHeader.jsx to add aria-expanded and aria-controls on the toggle
+* Edited ConsoleShell.jsx to pass sidebarCollapsed to both children
+* Ran: 8 new markup assertions confirming inert and aria state in both positions
+* Ran: production build, 33-case render pass, full harness 316 assertions 0 failed
+
+Context:
+tool=Claude Code
+branch=main
+repo_root=/Users/sristeeshrivastava/coderepo-react-node-waypoint
+worktree=main
+parent_agent=none
+
+## [2026-09-22T23:37:35+05:30] Disable Roll back when there is nothing to roll back to
+
+User Prompt (verbatim, secrets redacted):
+Keep the inert fix. Also, the Roll back button opens even when the environment has no earlier deployments to return to, so the dialog opens only to say there is nothing to roll back to. Disable it in that case with a title explaining why, the same way promote already does.
+
+Agent Response Summary:
+The button could not know whether a rollback was possible because only the dialog fetched the targets, and it did so after opening. Moved that fetch up into DeploymentsSection so the section is the single source of truth and the button and dialog cannot disagree, then passed the targets into RollbackDialog as a prop. Selectable targets are those not currently live, so an environment sitting on its first and only release now yields zero and the button is disabled. The title distinguishes three cases the way promote does: not a release manager, still checking the history, or no earlier release on this environment. Targets are reloaded when the project or environment changes and again when a deployment reaches a terminal status, since that is the moment what is live may have changed. Caught a stale-closure bug while wiring that: the polling effect now reads loadRollbackTargets and environmentId but its dependency array listed neither, so both were added. Also removed a comment I had placed after a return statement, where it read as unreachable. RollbackDialog lost its own fetch, its loading and load-error states and the deploymentApi import. Could not server-render the dialog to verify, since it uses createPortal, so verified the decision against live API data instead, which is the behaviour that actually matters.
+
+Actions:
+* Rewrote RollbackDialog.jsx to take targets as a prop; removed its fetch, effect, loading state and api import
+* Edited DeploymentsSection.jsx: rollbackTargets state, loadRollbackTargets, effect on project and environment, refresh on terminal status
+* Edited the Roll back button's disabled condition and three-case title
+* Fixed the polling effect dependency array to include environmentId and loadRollbackTargets
+* Ran: 8 assertions over live seeded data confirming the button is disabled on every production environment holding only its first release, and enabled where history exists
+* Ran: production build, 33-case render pass, full harness 316 assertions 0 failed
+
+Context:
+tool=Claude Code
+branch=main
+repo_root=/Users/sristeeshrivastava/coderepo-react-node-waypoint
+worktree=main
+parent_agent=none
